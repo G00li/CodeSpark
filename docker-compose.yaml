@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=production
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - crewai
+      - redis
+    environment:
+      - CREWAI_SERVICE_URL=http://crewai:8001
+      - REDIS_URL=redis://redis:6379
+      - XATA_API_KEY=${XATA_API_KEY}
+      - XATA_DATABASE_URL=${XATA_DATABASE_URL}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  crewai:
+    build: ./crewai
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./crewai:/app
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PORT=8001
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis_data: 

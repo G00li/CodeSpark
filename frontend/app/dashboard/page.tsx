@@ -25,6 +25,7 @@ import {
 import { FiPlus, FiCode, FiServer, FiLayers } from 'react-icons/fi';
 
 import axios from 'axios';
+import api from '@/services/api';
 
 // Tipos
 type Project = {
@@ -55,18 +56,30 @@ export default function Dashboard() {
     if (session?.user) {
       const fetchProjects = async () => {
         try {
-          // Na implementação real, precisaria do ID do usuário
-          const userId = 1; // Exemplo
-          const response = await axios.get(`/api/projects/user/${userId}`);
-          setProjects(response.data);
+          // Usar o id do usuário da sessão ou um valor padrão para teste
+          const userId = session.user.id || '1';
+          
+          // Tentar obter projetos do backend
+          const response = await api.get(`/api/projects/user/${userId}`);
+          
+          if (response.data && response.data.length > 0) {
+            setProjects(response.data);
+          } else {
+            // Se não houver projetos, carregar dados de exemplo
+            setProjects(getDemoProjects());
+          }
         } catch (error) {
           console.error('Erro ao carregar projetos:', error);
           toast({
             title: 'Erro ao carregar projetos',
-            status: 'error',
+            description: 'Usando dados de demonstração',
+            status: 'warning',
             duration: 3000,
             isClosable: true,
           });
+          
+          // Carregar dados de exemplo em caso de erro
+          setProjects(getDemoProjects());
         } finally {
           setIsLoading(false);
         }
@@ -76,10 +89,9 @@ export default function Dashboard() {
     }
   }, [session, toast]);
 
-  // Simulação de projetos para demonstração
-  useEffect(() => {
-    // Dados de exemplo, em produção seriam carregados da API
-    const demoProjects: Project[] = [
+  // Função para retornar projetos de demonstração
+  const getDemoProjects = (): Project[] => {
+    return [
       {
         id: 1,
         title: 'Sistema de Blog com React',
@@ -97,10 +109,7 @@ export default function Dashboard() {
         created_at: '2023-12-10',
       },
     ];
-
-    setProjects(demoProjects);
-    setIsLoading(false);
-  }, []);
+  };
 
   const getProjectTypeIcon = (type: string) => {
     switch (type) {

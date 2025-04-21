@@ -11,7 +11,10 @@ help: ## Show this help
 
 up: ## Start all containers
 	@echo "${BLUE}Subindo containers...${NC}"
-	docker compose up --build
+	docker compose up -d --build backend crewai redis
+	@echo "${BLUE}Aguardando backend iniciar...${NC}"
+	sleep 5
+	docker compose up -d --build frontend
 	@echo "${GREEN}Todos os serviços estão rodando!${NC}"
 	@echo "Frontend: http://localhost:3000"
 	@echo "Backend API: http://localhost:8000"

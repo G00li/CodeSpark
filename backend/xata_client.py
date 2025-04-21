@@ -3,8 +3,12 @@ from contextlib import contextmanager
 from dotenv import load_dotenv
 from xata.client import XataClient
 
-# Carregar variáveis de ambiente do arquivo .env
-load_dotenv()
+# Caminho do projeto raiz (um nível acima do diretório atual)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV_PATH = os.path.join(PROJECT_ROOT, '.env')
+
+# Carregar variáveis de ambiente do arquivo .env na raiz
+load_dotenv(dotenv_path=ENV_PATH)
 
 # Configuração do cliente Xata
 XATA_API_KEY = os.getenv("XATA_API_KEY")

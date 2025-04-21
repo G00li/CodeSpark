@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
@@ -13,7 +15,8 @@ services:
       - backend
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
-      - NODE_ENV=production
+      - NODE_ENV=development
+    restart: unless-stopped
 
   backend:
     build: ./backend
@@ -21,6 +24,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+      - ./.env:/app/.env
     depends_on:
       - crewai
       - redis
@@ -30,6 +34,7 @@ services:
       - XATA_API_KEY=${XATA_API_KEY}
       - XATA_DATABASE_URL=${XATA_DATABASE_URL}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+    restart: unless-stopped
 
   crewai:
     build: ./crewai
@@ -40,6 +45,7 @@ services:
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - PORT=8001
+    restart: unless-stopped
 
   redis:
     image: redis:alpine
@@ -52,6 +58,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
 volumes:
   redis_data: 

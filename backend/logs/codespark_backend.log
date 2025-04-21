@@ -1,0 +1,6 @@
+2025-04-20 13:55:15,605 - codespark.app - INFO - Request received: {"request_id": "1745157315.60583", "method": "GET", "path": "/health", "client_ip": "172.24.0.1:58384", "headers": {"host": "localhost:8000", "user-agent": "curl/7.74.0", "accept": "*/*"}}
+2025-04-20 13:55:15,616 - main - INFO - Verificação de saúde realizada
+2025-04-20 13:55:15,617 - codespark.app - INFO - Response sent: {"request_id": "1745157315.60583", "status_code": 200, "process_time_seconds": 0.011843, "headers": {"content-length": "20", "content-type": "application/json"}}
+2025-04-20 13:55:25,442 - codespark.app - INFO - Request received: {"request_id": "1745157325.442012", "method": "GET", "path": "/", "client_ip": "172.24.0.1:38990", "headers": {"host": "localhost:8000", "user-agent": "curl/7.74.0", "accept": "*/*"}}
+2025-04-20 13:55:25,445 - main - INFO - Endpoint raiz acessado
+2025-04-20 13:55:25,446 - codespark.app - INFO - Response sent: {"request_id": "1745157325.442012", "status_code": 200, "process_time_seconds": 0.004706, "headers": {"content-length": "44", "content-type": "application/json"}}

@@ -4,19 +4,27 @@ from typing import List, Optional
 import httpx
 import os
 from dotenv import load_dotenv
-from xata.client import XataClient
+from sqlalchemy.orm import Session
 
-# Carregar variáveis de ambiente
-load_dotenv()
+# Caminho do projeto raiz
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV_PATH = os.path.join(PROJECT_ROOT, '.env')
 
-# Importar dependência do cliente Xata
-from xata_client import get_db
+# Carregar variáveis de ambiente da raiz
+load_dotenv(dotenv_path=ENV_PATH)
+
+# Importar dependência do cliente do banco de dados
+from db_client import get_db, engine, Base
 import schemas
 from routers import users, projects, tasks
 from logger import get_logger, RequestResponseLoggingMiddleware, log_event
+from models import User, Project, Task  # Importar modelos SQLAlchemy
 
 # Criar logger para aplicação principal
 logger = get_logger(__name__)
+
+# Inicializar banco de dados
+Base.metadata.create_all(bind=engine)
 
 # Criar aplicação FastAPI
 app = FastAPI(title="CodeSpark API", 
@@ -52,7 +60,7 @@ def health_check():
 @app.post("/api/generate-project", response_model=schemas.ProjectProposal)
 async def generate_project(
     request: schemas.ProjectRequest,
-    db: XataClient = Depends(get_db)
+    db: Session = Depends(get_db)
 ):
     """
     Gera uma proposta de projeto baseada nas tecnologias e tipo de projeto solicitados.

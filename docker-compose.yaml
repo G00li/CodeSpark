@@ -28,11 +28,11 @@ services:
     depends_on:
       - crewai
       - redis
+      - postgres
     environment:
       - CREWAI_SERVICE_URL=http://crewai:8001
       - REDIS_URL=redis://redis:6379
-      - XATA_API_KEY=${XATA_API_KEY}
-      - XATA_DATABASE_URL=${XATA_DATABASE_URL}
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/codespark
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     restart: unless-stopped
 
@@ -60,5 +60,25 @@ services:
       retries: 5
     restart: unless-stopped
 
+  postgres:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=codespark
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
 volumes:
-  redis_data: 
+  redis_data:
+  postgres_data: 
